@@ -1,6 +1,3 @@
-# что-то не то с точностью. 4.6 вместо 4
-
-
 from urllib.request import urlopen
 import cv2 as cv # v. 3.4.18.65
 import numpy as np
@@ -17,48 +14,42 @@ def round_(num, step): # округляет с шагом 0.5
     return round(num / step) * step
 
 def main(img):
-
-    # возможно не пригодится, так как пока работает аналогично
-    # mask = np.zeros(img.shape[:2], dtype='uint8')
-    # circle_mask = cv.circle(mask.copy(), (img.shape[1]//2, 370), 325, 255, cv.FILLED)  # маска в виде круга
-    # cropped = cv.bitwise_and(img, img, mask=circle_mask)
-
-    cropped = img[195:400, 155:504]
+    cropped = img[195:405, 165:495]
     gray = cv.cvtColor(cropped, cv.COLOR_BGR2GRAY)
     gray = cv.inRange(gray, 120, 145)
-    gray = cv.morphologyEx(gray, cv.MORPH_OPEN, np.ones((3, 3), np.uint8))  # морфол. открытие
     gray = cv.erode(gray, np.ones((3, 3), np.uint8))
-    # gray = cv.morphologyEx(gray, cv.MORPH_CLOSE, np.ones((3, 3), np.uint8))  # морфол. открытие
-
     cv.imshow('res', gray)
     cv.waitKey(0)
 
     _, contours, __ = cv.findContours(gray, cv.RETR_EXTERNAL, cv.CHAIN_APPROX_SIMPLE)
     for c in contours:
-        rect = cv.minAreaRect(c)
-        area = int(rect[1][0] * rect[1][1])
-        if area < 300:
+        if cv.contourArea(c) < 100:
             continue
+
+        rect = cv.minAreaRect(c)
         box = cv.boxPoints(rect)
         box = np.int64(box)
-        ang = round(rect[2])
-        cX, cY = map(round, rect[0])
+        M = cv.moments(c)
+        cX = int(M['m10'] / M['m00'])
+        cY = int(M['m01'] / M['m00'])
         x, y = box[0]
-        # print(cX, cY)
-        # print(x, y)
 
-        # new_ang = 180*np.arctan2(x-cX, y-cY)/np.pi
-        print(f'-y + cY = {-y + cY}, x - cX = {x - cX}')
-        print(f'-y + cY = {-y + cY}, x - cX = {x - cX}')
-        new_ang = (np.arctan2(-y + cY, x - cX) * (180 / np.pi)) % 360
+        if x < gray.shape[1]/2: # если стрелка в левой части картинки
+            cX -= 6 # имперически подобрал
 
+        # ang = 180*np.arctan2(x-cX, y-cY)/np.pi
+        ang = (np.arctan2(-y + cY, x - cX) * (180 / np.pi)) % 360
+
+        # print(f'rect cx cy: {cx}, {cy}')
+        # print(f'Moments cx cy: {cX}, {cY}')
+        # print(f'-y + cY = {-y + cY}, x - cX = {x - cX}')
+        # print(f'-y + cY = {-y + cY}, x - cX = {x - cX}')
         # print(f'rect - {rect}')
         # print(f'box - {box}')
-        print(f'counted angle - {ang}')
-        print(f'new angle - {new_ang}')
-        print()
+        # print(f'counted angle - {ang}')
+        # print(f'new angle - {new_ang}')
 
-    print(f'показания вольтметра - {15 * new_ang / 360}')
+    print(15 * ang / 360)
 
 
 if __name__ == "__main__":
