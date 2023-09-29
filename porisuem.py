@@ -12,7 +12,7 @@ def main():
             cv.rectangle(img, (ulx, uly), (drx, dry), color, thic)
         elif shape[0] == 'circle':
             cx, cy, r, color, thic = map(int, shape[1:])
-            cv.circle(img, cx, cy, r, color, thic)
+            cv.circle(img, (cx, cy), r, color, thic)
         elif shape[0] == 'point':
             x, y, color = map(int, shape[1:])
             img[y, x] = color

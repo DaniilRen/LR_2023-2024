@@ -33,11 +33,13 @@ def main(img):
         x, y = box[0] # координаты конца стрелки
 
         if x < gray.shape[1]/2: # если стрелка в левой части картинки
-            cX -= 6 # имперически подобрал
+            cX -= 20 # имперически подобрал
 
         ang = (np.arctan2(-y + cY, x - cX) * (180 / np.pi)) % 360
+        break
 
     print(round_((15 * ang / 360), 0.5))
+    print(15 * ang / 360)
 
 
 if __name__ == "__main__":
