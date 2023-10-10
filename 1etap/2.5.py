@@ -1,71 +1,50 @@
-def correct(cor_s, s):
-    s = list(s)
-    cor_s = list(cor_s)
-    vars = {}
-    vars_cor = {}
-    cnt = 3
-    for i in s:
-        if i not in '-=+*/()':
-            vars[i] = str(cnt)
-            cnt += 1
-    cnt = 3
-    for i in range(len(s)):
-        if s[i] not in '-=+*/()':
-            s[i] = vars[s[i]]
-    for i in cor_s:
-        if i not in '-=+*/()':
-            vars_cor[i] = str(cnt)
-            cnt += 1
-    for i in range(len(cor_s)):
-        if cor_s[i] not in '-=+*/()':
-            cor_s[i] = vars_cor[cor_s[i]]
-    try:
-        if eval(''.join(s)) == eval(''.join(cor_s)):
-            return [True]
-        else:
-            return [False, eval(''.join(s)), eval(''.join(cor_s)), ''.join(s), ''.join(cor_s)]
-    except SyntaxError:
-        return [False, ''.join(s), ''.join(cor_s), "SyntaxError"]
+a = input()
+c = []
+opt = 0
 
 
+def opetgr(s, i, j):
+    shi = s[:i] + s[i:j].replace('+', '@') + s[j:]
+    return shi
 
-
-def main(s, i=0, cor='', variations=[], last=''):
-    print(s, i, variations, last)
-    if s.count('(') == s.count(')'):
-        is_correct = correct(cor, s)
-        if not is_correct[0]:
-            print("error:", is_correct)
-            return s
-        if s not in variations:
-            variations.append(s)
-    if i == len(s) or s.count('(') == 0 and s.count(')') == 0:
-        print(f'max i: {(i, s)}')
-        return s
-    if s[i] == '(' or s[i] == ')':
-        s = s[:i] + s[i+1:]
-        return main(s, 0, cor, variations, s[i])
-
-    # if s[i] == '(' and last == '(':
-    #     return main(s, i + 1, cor, variations, '(')
-    #
-    # if s[i] == '(' and last != '(':
-    #     s = s[:i] + s[i + 1:]
-    #     return main(s, 0, cor, variations, '(')
-    #
-    # if s[i] == ')' and last == ')':
-    #     return main(s, i + 1, cor, variations, ')')
-    #
-    # if s[i] == ')' and last != ')':
-    #     s = s[:i] + s[i + 1:]
-    #     return main(s, 0, cor, variations, ')')
-
+def removea(s, i, j):
+    i_2 = i
+    j_2 = j
+    if i != 0:
+        i_2 = i - 1
+    if j != len(s) - 1:
+        j_2 = j + 1
+    s_obr = s[i_2:j_2]
+    if '+' in s_obr[1:-1]:
+        flag = False
+        s = opetgr(s, i, j)
     else:
-        return main(s, i + 1, cor, variations, last)
+        flag = True
+    if s[i_2] != '*' and s[j_2] != '*':
+        if len(s) - 1 == j:
+            s = s[:j]
+        else:
+            s = s[:j] + s[j + 1:]
+        s = s[:i] + s[i + 1:]
+        return s, 2
+    elif (s[i_2] == '*' or s[j_2] == '*') and flag:
+        if len(s) - 1 == j:
+            s = s[:j]
+        else:
+            s = s[:j] + s[j + 1:]
+        s = s[:i] + s[i + 1:]
+        return s, 2
+    return s, 0
 
 
-if __name__ == "__main__":
-    s = input()
-    if s[0] == '(' and s[-1] == ')':
-        s = s[1:-1]
-    print(main(s, 0, s))
+for n, i in enumerate(a):
+    n -= opt
+    if i == ')':
+        a, opt1 = removea(a, c[-1], n)
+        c.pop()
+        opt += opt1
+    if i == '(':
+        c.append(n)
+
+
+print(a.replace('@', '+'))
