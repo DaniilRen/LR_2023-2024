@@ -1,4 +1,4 @@
-def is_valid(s): # проверка строки на чередование белого\черного
+def is_valid(s):
     last = s[1]
     for i in s:
         if i != last:
@@ -8,7 +8,7 @@ def is_valid(s): # проверка строки на чередование б�
             return False
     return True
 
-def rewrite(s, pieces): # основная функция, принимает строку и словарь вида {индексы: кусок}
+def check(s, pieces):
     indexes = list(pieces.keys())
     output = []
     res = ''
@@ -27,7 +27,7 @@ def rewrite(s, pieces): # основная функция, принимает с
             else:
                 res += v # просто добавляем в конец
                 output.append((*k, 0))
-        elif k[0] == 1: # если первый кусок
+        elif k[0] == 1: # если самый первый кусок
                 res += v
                 output.append((*k, 0))
         else: # в остальных случаях
@@ -57,10 +57,10 @@ if __name__ == "__main__":
         if i == len(s)-1:
             pieces[(start, i+1)] = s[start-1:i+1]
 
-    result = rewrite(s, pieces)
+    result = check(s, pieces)
     if len(result) == 1:
         print(result[0])
     else:
-        print(result[0])
+        # print(result[0])
         for i in result[1]:
             print(*i)

@@ -1,0 +1,30 @@
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner in = new Scanner(System.in);
+        int a = in.nextInt();
+        int b = in.nextInt();
+        int c = in.nextInt();
+        int all;
+        all = a + b + c;
+        int cnt = 0;
+        int a_minus = 0;
+        int b_minus = 0;
+        int c_minus = 0;
+        while (cnt < all / 2){
+            if (a != 0) {
+                a_minus++;
+                a--;
+            } else if (b != 0) {
+                b_minus++;
+                b--;
+            } else {
+                c_minus++;
+                c--;
+            }
+            cnt ++;
+        }
+        System.out.println(a_minus + " " + b_minus + " " + c_minus);
+    }
+}
