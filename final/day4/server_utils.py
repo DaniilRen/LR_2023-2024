@@ -1,6 +1,5 @@
 import requests as r
 
-
 # получение данных с сервера
 def get_target_building(data):
   colors = data.keys()
